@@ -15,7 +15,9 @@
 struct Board {
     int a, b, p;
     float pricePerArea;
-    Board(int a, int b, int p) : a(a), b(b), p(p) {
+    Board(int a, int b, int p) : p(p) {
+        a = a >= b ? a : b;
+        b = a <= b ? a : b;
         pricePerArea = static_cast<double>(p) / (a * b);
     }
 };
@@ -29,13 +31,54 @@ bool compareByPricePerArea(const Board& a, const Board& b) {
     return a.pricePerArea > b.pricePerArea;
 }
 
+bool fits(int a, int b, int X, int Y) {
+    return ((a <= X && b <= Y) || (a <= Y && b <= X));
+}
+
+bool alwaysFits(int a, int b, int X, int Y) {
+    return ((a <= X && b <= Y) && (a <= Y && b <= X));
+}
+
+int howManyFit(int X, int Y, int a, int b) {
+    return (X * Y) / (a * b);
+}
+
 void sortDb(std::vector<Board>& Db) {
     std::sort(Db.begin(), Db.end(), compareByPricePerArea);
 }
 
-int calculateOutput(std::vector<Board>& Db, int X, int Y) { 
-    if (Db.size() == 0) { return 0; }
-    else {}
+int calculateOutput(std::vector<Board>& Db, int X, int Y, int index) {
+
+    Board& board = Db[index];
+
+    if (fits(board.a, board.b, X, Y)) {
+        int X1, Y1, X2, Y2;
+        if (!alwaysFits(board.a, board.b, X, Y)) {
+            int max = X > Y ? X : Y;
+            int min = X < Y ? X : Y;
+            int max2 = board.a > board.b ? board.a : board.b;
+            int min2 = board.a < board.b ? board.a : board.b;
+            int X1 = max;
+            int Y1 = min2;
+            int X2 = max;
+            int Y2 = min - max2;
+        }
+        if (fitsVertically(board.a, board.b, X, Y)) {
+            
+        }
+        else if (fitsHorizontally(board.a, board.b, X, Y)) {
+
+        }
+        else {
+
+        }
+
+        return calculateOutput(Db, X1, Y1, index) + calculateOutput(Db, X2, Y2, index);
+    }
+
+    else if (index == Db.size()) { return 0; }
+
+    else { return calculateOutput(Db, X, Y, index++); }
 }
 
 void showOutput(std::vector<Board>& Db, int X, int Y, int n) {
@@ -58,6 +101,8 @@ int main() {
     std::getline(std::cin, userInput);
     std::istringstream iss(userInput);
     iss >> X >> Y;
+    X = X >= Y ? X : Y;
+    Y = X <= Y ? X : Y;
 
     std::getline(std::cin, userInput);
     std::istringstream iss2(userInput);
@@ -71,13 +116,14 @@ int main() {
         int a, b, p;
         iss3 >> a >> b >> p;
 
-        if ((a <= X && b <= Y) || (a <= Y && b <= X)) { addToDb(Db, a, b, p); }
+        if (fits(a, b, X, Y)) { addToDb(Db, a, b, p); }
     }
 
     sortDb(Db);
 
-    //int maxPrice = calculateOutput(Db, X, Y);
-    //std::cout << maxPrice << std::endl;
+    int maxPrice = (Db.size() == 0) ? 0 : calculateOutput(Db, X, Y, 0);
+    std::cout << maxPrice << std::endl;
+
     showOutput(Db, X, Y, n);
 
     return 0;
