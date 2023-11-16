@@ -1,4 +1,10 @@
-//ProjASA
+/**
+ * Project 1 ASA
+ * Project done by:
+ * João Rodrigues - ist1106221
+ * Mariana Santana - ist1106992
+ * TL03
+*/
 
 #include <iostream>
 #include <sstream>
@@ -27,7 +33,10 @@ void sortDb(std::vector<Board>& Db) {
     std::sort(Db.begin(), Db.end(), compareByPricePerArea);
 }
 
-int calculateOutput(int X, int Y, int Db) { return 0; }
+int calculateOutput(std::vector<Board>& Db, int X, int Y) { 
+    if (Db.size() == 0) { return 0; }
+    else {}
+}
 
 void showOutput(std::vector<Board>& Db, int X, int Y, int n) {
 
@@ -67,7 +76,7 @@ int main() {
 
     sortDb(Db);
 
-    //int maxPrice = calculateOutput(X, Y, Db);
+    //int maxPrice = calculateOutput(Db, X, Y);
     //std::cout << maxPrice << std::endl;
     showOutput(Db, X, Y, n);
 
