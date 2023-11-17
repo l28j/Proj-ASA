@@ -13,7 +13,7 @@
 #include <algorithm>
 
 struct Board {
-    int a, b, p;
+    int a, b, p;         // a is the longer side, b is the shorter side, p is the price
     float pricePerArea;
     Board(int a, int b, int p) : p(p) {
         a = a >= b ? a : b;
@@ -35,12 +35,11 @@ bool fits(int a, int b, int X, int Y) {
     return ((a <= X && b <= Y) || (a <= Y && b <= X));
 }
 
-bool alwaysFits(int a, int b, int X, int Y) {
-    return ((a <= X && b <= Y) && (a <= Y && b <= X));
-}
-
 int howManyFit(int X, int Y, int a, int b) {
-    return (X * Y) / (a * b);
+    
+    int fit_h = Y / b;
+    int fit_w = X / a;
+    int result = fit_h * fit_w;
 }
 
 void sortDb(std::vector<Board>& Db) {
@@ -52,27 +51,8 @@ int calculateOutput(std::vector<Board>& Db, int X, int Y, int index) {
     Board& board = Db[index];
 
     if (fits(board.a, board.b, X, Y)) {
-        int X1, Y1, X2, Y2;
-        if (!alwaysFits(board.a, board.b, X, Y)) {
-            int max = X > Y ? X : Y;
-            int min = X < Y ? X : Y;
-            int max2 = board.a > board.b ? board.a : board.b;
-            int min2 = board.a < board.b ? board.a : board.b;
-            int X1 = max;
-            int Y1 = min2;
-            int X2 = max;
-            int Y2 = min - max2;
-        }
-        if (fitsVertically(board.a, board.b, X, Y)) {
-            
-        }
-        else if (fitsHorizontally(board.a, board.b, X, Y)) {
-
-        }
-        else {
-
-        }
-
+        
+    }
         return calculateOutput(Db, X1, Y1, index) + calculateOutput(Db, X2, Y2, index);
     }
 
@@ -96,7 +76,7 @@ void showOutput(std::vector<Board>& Db, int X, int Y, int n) {
 int main() {
 
     std::string userInput;
-    int X, Y, n;
+    int X, Y, n;                   // X is the longer side, Y is the shorter side, n is the number of boards
 
     std::getline(std::cin, userInput);
     std::istringstream iss(userInput);
