@@ -1,0 +1,5 @@
+# Proj-ASA
+
+TO COMPILE : make
+TO EXECUTE TEST1 : make1
+TO EXECUTE TEST2 : make2
