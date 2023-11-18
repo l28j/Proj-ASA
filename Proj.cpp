@@ -11,32 +11,31 @@
 #include <vector>
 #include <algorithm>
 
-struct Slate { 
+struct Slate {
     int a, b, p;
     Slate(int a, int b, int p) : a(a), b(b), p(p) {}
 };
 
 #define max_value(a, b) (a > b ? a : b)
 
-bool fits (int a, int b, int X, int Y) {
+bool fits(int a, int b, int X, int Y) {
     return (a <= X && b <= Y) || (a <= Y && b <= X);
 }
 
-int knapsack(std::vector<int> values, std::vector<std::pair<int, int>> dimensions, int X, int Y) {
-    int numElements = dimensions.size();
+int knapsack(const std::vector<Slate>& slates, int X, int Y) {
+    int numElements = slates.size();
     int maxArea = X * Y;
-    
+
     std::vector<int> k(maxArea + 1, 0);
 
     for (int w = 1; w <= maxArea; w++) {
-        
-        k[w] = k[w - 1];  
+        k[w] = k[w - 1];
 
         for (int i = 0; i < numElements; i++) {
-            if (fit(dimensions[i].first, dimensions[i].second, X, Y)) {
-                int area = dimensions[i].first * dimensions[i].second;
-                int numRectangles = w / area; 
-                k[w] = std::max(k[w], k[w - numRectangles * area] + numRectangles * values[i]);
+            if (fits(slates[i].a, slates[i].b, X, Y)) {
+                int area = slates[i].a * slates[i].b;
+                int numRectangles = w / area;
+                k[w] = std::max(k[w], k[w - numRectangles * area] + numRectangles * slates[i].p);
             }
         }
     }
@@ -51,17 +50,15 @@ int main() {
     std::istringstream iss(userInput);
     iss >> x >> y;
     X = x > y ? x : y;
-    Y = x > y ? y : x;                       
+    Y = x > y ? y : x;
 
     std::getline(std::cin, userInput);
     std::istringstream iss2(userInput);
     iss2 >> n;
 
-    std::vector<int> values;
     std::vector<Slate> slates;
 
     for (int i = 0; i < n; i++) {
-
         std::getline(std::cin, userInput);
         std::istringstream iss3(userInput);
 
@@ -76,10 +73,11 @@ int main() {
         }
     }
 
-    std::sort(slates.begin(),slates.end(), [](const auto& slate1, const auto& slate2) {
-        return slate1.a * slate1.b < slate2.a * slate2.b; });
+    std::sort(slates.begin(), slates.end(), [](const Slate& slate1, const Slate& slate2) {
+    return slate1.a * slate1.b < slate2.a * slate2.b;
+    });
 
-    int maxPrice = knapsack(values, dimensions, X , Y);
+    int maxPrice = knapsack(slates, X, Y);
     std::cout << maxPrice << std::endl;
 
     return 0;

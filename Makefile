@@ -1,43 +1,18 @@
-# Variables
-CC = g++
-SRC = Proj.cpp
-OBJ = $(SRC:.cpp=.o)
-EXE = Proj
-CFLAGS = -g \
-	-fsanitize=address \
-	-fno-omit-frame-pointer \
-	-fsanitize=undefined \
-	-std=c++11 -O3 -Wall -Wextra -pedantic
+CFLAG = g++ -std=c++11 -O3 -fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment -Wall  -lm
 
-# Rules
-all: $(EXE)
+Proj.o : Proj.cpp
+	$(CFLAG) -o Proj.o Proj.cpp
 
-$(EXE): $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@
+run1: 
+	./Proj.o < test1.in
 
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+run2: 
+	./Proj.o < test2.in
 
 clean:
-	rm -f $(OBJ) $(EXE)
+	rm -f *.o Proj.o
 
-run: $(EXE)
-	./$(EXE)
-
-memcheck: $(EXE)
-	valgrind --leak-check=full --show-leak-kinds=all ./$(EXE)
-
-# Automatic Dependency Generation
-DEP = $(OBJ:.o=.d)
--include $(DEP)
-
-%.d: %.cpp
-	@set -e; rm -f $@; \
-	$(CC) -MM $(CFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-.PHONY: all clean run memcheck
-
+clean2:
+	rm -f *.o
 
 
