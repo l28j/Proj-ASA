@@ -5,106 +5,60 @@
  * Mariana Santana - ist1106992
  * TL03
 */
-
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <algorithm>
 
-struct Board {
-    int a, b, p;         // a is the longer side, b is the shorter side, p is the price
-    float pricePerArea;
-    Board(int a, int b, int p) : p(p) {
-        a = a >= b ? a : b;
-        b = a <= b ? a : b;
-        pricePerArea = static_cast<double>(p) / (a * b);
-    }
-};
+#define max_value(a, b) (a > b ? a : b)
 
-void addToDb(std::vector<Board>& Db, int a, int b, int p) {
-    Board newBoard(a, b, p);
-    Db.push_back(newBoard);
-}
+int knapsack(std::vector<int> values, std::vector<std::pair<int, int>> dimensions, int maxArea) {
+    int numElements = dimensions.size();
+    // Inicializar um vetor para substituir as chamadas recursivas.
+    // Todos os índices são inicializados a 0.
+    std::vector<int> k(maxArea + 1, 0);
 
-bool compareByPricePerArea(const Board& a, const Board& b) {
-    return a.pricePerArea > b.pricePerArea;
-}
+    for (int w = 1; w <= maxArea; w++) {
+        k[w] = k[w - 1]; // O valor guardado na mochila nunca é menor que o anterior.
 
-bool fits(int a, int b, int X, int Y) {
-    return ((a <= X && b <= Y) || (a <= Y && b <= X));
-}
+        for (int i = 0; i < numElements; i++) {
+            int area = dimensions[i].first * dimensions[i].second;
+            int numRectangles = w / area; // Número de retângulos que cabem na área atual.
 
-int howManyFit(int X, int Y, int a, int b) {
-    
-    int fit_h = Y / b;
-    int fit_w = X / a;
-    int result = fit_h * fit_w;
-}
-
-void sortDb(std::vector<Board>& Db) {
-    std::sort(Db.begin(), Db.end(), compareByPricePerArea);
-}
-
-int calculateOutput(std::vector<Board>& Db, int X, int Y, int index) {
-
-    Board& board = Db[index];
-
-    if (fits(board.a, board.b, X, Y)) {
-        
-    }
-        return calculateOutput(Db, X1, Y1, index) + calculateOutput(Db, X2, Y2, index);
+            k[w] = std::max(k[w], k[w - numRectangles * area] + numRectangles * values[i]);
+        }
     }
 
-    else if (index == Db.size()) { return 0; }
-
-    else { return calculateOutput(Db, X, Y, index++); }
-}
-
-void showOutput(std::vector<Board>& Db, int X, int Y, int n) {
-
-    for (const Board& board : Db) {
-        std::cout << "Db:";
-        std::cout << board.a << " " << board.b << " " << board.p << " " << board.pricePerArea << std::endl;
-    }
-
-    std::cout << "X: " << X << std::endl;
-    std::cout << "Y: " << Y << std::endl;
-    std::cout << "N: " << n << std::endl;
+    return k[maxArea];
 }
 
 int main() {
-
     std::string userInput;
-    int X, Y, n;                   // X is the longer side, Y is the shorter side, n is the number of boards
+    int X, Y, n;
 
     std::getline(std::cin, userInput);
     std::istringstream iss(userInput);
     iss >> X >> Y;
-    X = X >= Y ? X : Y;
-    Y = X <= Y ? X : Y;
 
     std::getline(std::cin, userInput);
     std::istringstream iss2(userInput);
     iss2 >> n;
 
-    std::vector<Board> Db;
+    std::vector<int> values;
+    std::vector<std::pair<int, int>> dimensions;
 
     for (int i = 0; i < n; i++) {
         std::getline(std::cin, userInput);
         std::istringstream iss3(userInput);
         int a, b, p;
         iss3 >> a >> b >> p;
-
-        if (fits(a, b, X, Y)) { addToDb(Db, a, b, p); }
+        values.push_back(p);
+        dimensions.push_back(std::make_pair(a, b));
     }
 
-    sortDb(Db);
-
-    int maxPrice = (Db.size() == 0) ? 0 : calculateOutput(Db, X, Y, 0);
+    int maxPrice = knapsack(values, dimensions, X * Y);
     std::cout << maxPrice << std::endl;
-
-    showOutput(Db, X, Y, n);
 
     return 0;
 }
