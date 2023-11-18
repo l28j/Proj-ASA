@@ -13,6 +13,10 @@
 
 #define max_value(a, b) (a > b ? a : b)
 
+bool fit (int a, int b, int X, int Y) {
+    return (a <= X && b <= Y) || (a <= Y && b <= X);
+}
+
 int knapsack(std::vector<int> values, std::vector<std::pair<int, int>> dimensions, int X, int Y) {
     int numElements = dimensions.size();
     int maxArea = X * Y;
@@ -24,10 +28,11 @@ int knapsack(std::vector<int> values, std::vector<std::pair<int, int>> dimension
         k[w] = k[w - 1];  
 
         for (int i = 0; i < numElements; i++) {
-            int area = dimensions[i].first * dimensions[i].second;
-            int numRectangles = w / area; 
-
-            k[w] = std::max(k[w], k[w - numRectangles * area] + numRectangles * values[i]);
+            if (fit(dimensions[i].first, dimensions[i].second, X, Y)) {
+                int area = dimensions[i].first * dimensions[i].second;
+                int numRectangles = w / area; 
+                k[w] = std::max(k[w], k[w - numRectangles * area] + numRectangles * values[i]);
+            }
         }
     }
     return k[maxArea];
