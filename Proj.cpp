@@ -11,9 +11,14 @@
 #include <vector>
 #include <algorithm>
 
+struct Slate { 
+    int a, b, p;
+    Slate(int a, int b, int p) : a(a), b(b), p(p) {}
+};
+
 #define max_value(a, b) (a > b ? a : b)
 
-bool fit (int a, int b, int X, int Y) {
+bool fits (int a, int b, int X, int Y) {
     return (a <= X && b <= Y) || (a <= Y && b <= X);
 }
 
@@ -40,30 +45,50 @@ int knapsack(std::vector<int> values, std::vector<std::pair<int, int>> dimension
 
 int main() {
     std::string userInput;
-    int X, Y, n;
+    int x, y, X, Y, n;
 
     std::getline(std::cin, userInput);
     std::istringstream iss(userInput);
-    iss >> X >> Y;                          
+    iss >> x >> y;
+    X = x > y ? x : y;
+    Y = x > y ? y : x;                       
 
     std::getline(std::cin, userInput);
     std::istringstream iss2(userInput);
     iss2 >> n;
 
     std::vector<int> values;
-    std::vector<std::pair<int, int>> dimensions;
+    std::vector<Slate> slates;
 
     for (int i = 0; i < n; i++) {
+
         std::getline(std::cin, userInput);
         std::istringstream iss3(userInput);
-        int a, b, p;
+
+        int a, b, p, A, B;
         iss3 >> a >> b >> p;
-        values.push_back(p);
-        dimensions.push_back(std::make_pair(a, b));
-    }                       
+        A = a > b ? a : b;
+        B = a > b ? b : a;
+
+        if (fits(A, B, X, Y)) {
+            Slate newSlate(A, B, p);
+            slates.push_back(newSlate);
+        }
+    }
+
+    std::sort(slates.begin(),slates.end(), [](const auto& slate1, const auto& slate2) {
+        return slate1.a * slate1.b < slate2.a * slate2.b; });
 
     int maxPrice = knapsack(values, dimensions, X , Y);
     std::cout << maxPrice << std::endl;
 
     return 0;
 }
+
+
+
+        /*auto position = std::lower_bound(dimensions.begin(), dimensions.end(), std::make_pair(a, b), 
+            [](const auto& a, const auto& b) { return a.first * a.second < b.first * b.second; });
+        dimensions.insert(position, std::make_pair(a, b));
+        int pos = *position;
+        values.insert(values.begin() + pos, p);*/
