@@ -19,7 +19,7 @@ struct Slate {
 #define max_value(a, b) (a > b ? a : b)
 
 bool fits(int a, int b, int X, int Y) {
-    return (a <= X && b <= Y) || (a <= Y && b <= X);
+    return (a >= 0 && b >= 0 ) && ( (a <= X && b <= Y) || (a <= Y && b <= X) );
 }
 
 int knapsack(const std::vector<Slate>& slates, int X, int Y) {
