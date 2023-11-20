@@ -32,12 +32,10 @@ int knapsack(const std::vector<Slate>& slates, int X, int Y) {
         k[w] = k[w - 1];
 
         for (int i = 0; i < numElements; i++) {
-            if (fits(slates[i].a, slates[i].b, X, Y)) {
                 int area = slates[i].a * slates[i].b;
                 int numRectangles = w / area;
                 k[w] = std::max(k[w], k[w - numRectangles * area] + numRectangles * slates[i].p);
             }
-        }
     }
     return k[maxArea];
 }
