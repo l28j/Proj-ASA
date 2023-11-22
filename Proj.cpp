@@ -25,6 +25,9 @@ int knapsack(const std::vector<Slate>& slates, int X, int Y) {
                 if (slates[n].a <= i && slates[n].b <= j) {
                     k[i][j] = max_value(k[i][j], k[i - slates[n].a][j] + k[slates[n].a][j - slates[n].b] + slates[n].p);
                 }
+                if (slates[n].b <= i && slates[n].a <= j) {
+                    k[i][j] = max_value(k[i][j], k[i - slates[n].b][j] + k[slates[n].b][j - slates[n].a] + slates[n].p);
+                }
             }
         }
     }
