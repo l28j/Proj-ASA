@@ -17,21 +17,27 @@ bool fits(int a, int b, int X, int Y) {
 
 int knapsack(const std::vector<Slate>& slates, int X, int Y) {
     int numElements = slates.size();
-    std::vector<std::vector<int>> k(X + 1, std::vector<int>(Y + 1, 0));
+    std::vector<int> k((X + 1) * (Y + 1), 0);
 
     for (int i = 1; i <= X; i++) {
         for (int j = 1; j <= Y; j++) {
             for (int n = 0; n < numElements; n++) {
-                if (slates[n].a <= i && slates[n].b <= j) {
-                    k[i][j] = max_value(k[i][j], k[i - slates[n].a][j] + k[slates[n].a][j - slates[n].b] + slates[n].p);
+                int currentA = slates[n].a;
+                int currentB = slates[n].b;
+                int temp = k[(i - currentA) * (Y + 1) + j] + k[currentA * (Y + 1) + j - currentB] + slates[n].p;
+
+                if (currentA <= i && currentB <= j) {
+                    k[i * (Y + 1) + j] = max_value(k[i * (Y + 1) + j], temp);
                 }
-                if (slates[n].b <= i && slates[n].a <= j) {
-                    k[i][j] = max_value(k[i][j], k[i - slates[n].b][j] + k[slates[n].b][j - slates[n].a] + slates[n].p);
+
+                temp = k[(i - currentB) * (Y + 1) + j] + k[currentB * (Y + 1) + j - currentA] + slates[n].p;
+                if (currentB <= i && currentA <= j) {
+                    k[i * (Y + 1) + j] = max_value(k[i * (Y + 1) + j], temp);
                 }
             }
         }
     }
-    return k[X][Y];
+    return k[X * (Y + 1) + Y];
 }
 
 int main() {
@@ -59,8 +65,10 @@ int main() {
         A = a > b ? a : b;
         B = a > b ? b : a;
 
-        Slate newSlate(A, B, p);
-        slates.push_back(newSlate);
+        if (fits(A, B, X, Y) && p > 0) {
+            Slate newSlate(A, B, p);
+            slates.push_back(newSlate);
+        }
     }
 
     std::sort(slates.begin(), slates.end(), [](const Slate& slate1, const Slate& slate2) {
