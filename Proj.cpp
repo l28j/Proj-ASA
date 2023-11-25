@@ -1,31 +1,20 @@
 #include <iostream>
 #include <sstream>
-#include <string>
 #include <vector>
-#include <algorithm>
-#include <map>
 
-struct Slate {
-    int a, b, p;
-    Slate(int a, int b, int p) : a(a), b(b), p(p) {}
-};
-
-int max_value(int a, int b) { return std::max(a, b); }
-
-bool fitsVertically(int a, int b, int X, int Y) { return (a <= X && b <= Y) && (a > 0 && b > 0); }
-bool fitsHorizontally(int a, int b, int X, int Y) { return (a <= Y && b <= X) && (a > 0 && b > 0); }
-bool fits(int a, int b, int X, int Y) { return (fitsVertically(a, b, X, Y) || fitsHorizontally(a, b, X, Y)); }
+bool fitsVertically(int a, int b, int X, int Y) { return (a <= X && b <= Y); }
+bool fitsHorizontally(int a, int b, int X, int Y) { return (a <= Y && b <= X); }
 bool allFits(int a, int b, int X, int Y) { return (fitsVertically(a, b, X, Y) && fitsHorizontally(a, b, X, Y)); }
 
-int result2(std::vector<std::vector<int>>& m, int X, int Y) {
+int calcMaxPrice(std::vector<std::vector<int>>& m, int X, int Y) {
 
     for (int i = 0; i < X; i++) {
         for (int j = 0; j < Y; j++) {
             for (int k = 0; k < i; k++) {
-                m[i][j] = max_value(m[i][j], m[k][j] + m[i - k - 1][j]);
+                m[i][j] = std::max(m[i][j], m[k][j] + m[i - k - 1][j]);
             }
             for (int k = 0; k < j; k++) {
-                m[i][j] = max_value(m[i][j], m[i][k] + m[i][j - k - 1]);
+                m[i][j] = std::max(m[i][j], m[i][k] + m[i][j - k - 1]);
             }
         }
     }
@@ -48,25 +37,27 @@ int main() {
     std::vector<std::vector<int>> m(X, std::vector<int>(Y, 0));
 
     for (int i = 0; i < n; i++) {
+
+        int a, b, p;
         std::getline(std::cin, userInput);
         std::istringstream iss3(userInput);
-
-        int p, a, b;
         iss3 >> a >> b >> p;
 
-        if (allFits(a, b, X, Y) && p > 0) {
-            m[a-1][b-1] = max_value(m[a-1][b-1], p);
-            m[b-1][a-1] = max_value(m[b-1][a-1], p);
-        }
-        else if (fitsVertically(a, b, X, Y) && p > 0) {
-            m[a-1][b-1] = max_value(m[a-1][b-1], p);
-        }
-        else if (fitsHorizontally(a, b, X, Y) && p > 0) {
-            m[b-1][a-1] = max_value(m[b-1][a-1], p);
+        if (a > 0 && b > 0 && p > 0) {
+            if (allFits(a, b, X, Y)) {
+                m[a-1][b-1] = std::max(m[a-1][b-1], p);
+                m[b-1][a-1] = std::max(m[b-1][a-1], p);
+            }
+            else if (fitsVertically(a, b, X, Y)) {
+                m[a-1][b-1] = std::max(m[a-1][b-1], p);
+            }
+            else if (fitsHorizontally(a, b, X, Y)) {
+                m[b-1][a-1] = std::max(m[b-1][a-1], p);
+            }
         }
     }
 
-    int maxPrice2 = result2(m, X, Y);
+    int maxPrice2 = calcMaxPrice(m, X, Y);
     std::cout << maxPrice2 << std::endl;
 
     return 0;
