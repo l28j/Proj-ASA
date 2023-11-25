@@ -9,46 +9,63 @@ struct Slate {
     Slate(int a, int b, int p) : a(a), b(b), p(p) {}
 };
 
-#define max_value(a, b) (a > b ? a : b)
+inline int max_value(int a, int b) {
+    return std::max(a, b);
+}
 
 bool fits(int a, int b, int X, int Y) {
     return (a > 0 && b > 0) && ((a <= X && b <= Y) || (a <= Y && b <= X));
 }
 
-int knapsack(const std::vector<Slate>& slates, int X, int Y) {
+int result(const std::vector<Slate>& slates, int X, int Y) {
+    
+    
     int numElements = slates.size();
-    std::vector<int> k((X + 1) * (Y + 1), 0);
+    std::vector<std::vector<int>> values(X+1, std::vector<int>(Y+1, 0));   
 
-    for (int i = 1; i <= X; i++) {
-        for (int j = 1; j <= Y; j++) {
-            for (int n = 0; n < numElements; n++) {
-                int currentA = slates[n].a;
-                int currentB = slates[n].b;
-                int temp = k[(i - currentA) * (Y + 1) + j] + k[currentA * (Y + 1) + j - currentB] + slates[n].p;
+    for (int i = 0 ; i <= X ; i ++) {
+        for (int j = 0 ; j <= Y ; j ++) {
+            for (int k = 0 ; k < numElements ; k ++) {
+                
+                    Slate slate = slates[k];    
+                    int a = slate.a;
+                    int b = slate.b;
+                    int p = slate.p;
 
-                if (currentA <= i && currentB <= j) {
-                    k[i * (Y + 1) + j] = max_value(k[i * (Y + 1) + j], temp);
+                if (( i==a && j ==b) || (i==b && j==a)){
+                    values[i][j] = max_value(values[i][j], p);
+                }
+                else if ((i >= a && j >= b) && ( i >= b && j >= a)) {
+                    values[i][j] = max_value(values[i][j], 
+                        max_value(values[i-a][j] + values[a][j], values[i-b][j] + values[b][j]));
+
+                    values[i][j] = max_value(values[i][j],
+                        max_value(values[i][j-a] + values[i][a], values[i][j-b] + values[i][b]));
                 }
 
-                temp = k[(i - currentB) * (Y + 1) + j] + k[currentB * (Y + 1) + j - currentA] + slates[n].p;
-                if (currentB <= i && currentA <= j) {
-                    k[i * (Y + 1) + j] = max_value(k[i * (Y + 1) + j], temp);
+                else if (( i >= a && j >= b)){
+                    values[i][j] = max_value(values[i][j],
+                        max_value(values[i-a][j] + values[a][j], values[i][j-b] + values[i][b]));
                 }
+                else if (( i >= b && j >= a)){
+                    values[i][j] = max_value(values[i][j],
+                        max_value(values[i-b][j] + values[b][j], values[i][j-a] + values[i][a]));
+                }            
             }
         }
     }
-    return k[X * (Y + 1) + Y];
-}
 
+    return values[X][Y];
+}
+    
 int main() {
     std::string userInput;
-    int x, y, X, Y, n;
+    int X, Y, n;
 
     std::getline(std::cin, userInput);
     std::istringstream iss(userInput);
-    iss >> x >> y;
-    X = x > y ? x : y;
-    Y = x > y ? y : x;
+    iss >> X >> Y;
+  
 
     std::getline(std::cin, userInput);
     std::istringstream iss2(userInput);
@@ -60,22 +77,15 @@ int main() {
         std::getline(std::cin, userInput);
         std::istringstream iss3(userInput);
 
-        int a, b, p, A, B;
-        iss3 >> a >> b >> p;
-        A = a > b ? a : b;
-        B = a > b ? b : a;
+        int p, A, B;
+        iss3 >> A >> B >> p;
 
         if (fits(A, B, X, Y) && p > 0) {
-            Slate newSlate(A, B, p);
-            slates.push_back(newSlate);
+            slates.emplace_back(A, B, p);
         }
     }
 
-    std::sort(slates.begin(), slates.end(), [](const Slate& slate1, const Slate& slate2) {
-        return slate1.a * slate1.b < slate2.a * slate2.b;
-    });
-
-    int maxPrice = knapsack(slates, X, Y);
+    int maxPrice = result(slates, X, Y);
     std::cout << maxPrice << std::endl;
 
     return 0;
