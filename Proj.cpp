@@ -7,7 +7,6 @@ bool fitsHorizontally(int a, int b, int X, int Y) { return (a <= Y && b <= X); }
 bool allFits(int a, int b, int X, int Y) { return (fitsVertically(a, b, X, Y) && fitsHorizontally(a, b, X, Y)); }
 
 int calcMaxPrice(std::vector<std::vector<int>>& m, int X, int Y) {
-
     for (int i = 0; i < X; i++) {
         for (int j = 0; j < Y; j++) {
             for (int k = 0; k < i; k++) {
@@ -25,23 +24,16 @@ int main() {
 
     std::string userInput;
     int X, Y, n;
-
-    std::getline(std::cin, userInput);
-    std::istringstream iss(userInput);
-    iss >> X >> Y;
-  
-    std::getline(std::cin, userInput);
-    std::istringstream iss2(userInput);
-    iss2 >> n;
+    
+    scanf("%d %d", &X, &Y);
+    scanf("%d", &n);
     
     std::vector<std::vector<int>> m(X, std::vector<int>(Y, 0));
 
     for (int i = 0; i < n; i++) {
 
         int a, b, p;
-        std::getline(std::cin, userInput);
-        std::istringstream iss3(userInput);
-        iss3 >> a >> b >> p;
+        scanf("%d %d %d", &a, &b, &p);
 
         if (a > 0 && b > 0 && p > 0) {
             if (allFits(a, b, X, Y)) {
@@ -57,8 +49,7 @@ int main() {
         }
     }
 
-    int maxPrice2 = calcMaxPrice(m, X, Y);
-    std::cout << maxPrice2 << std::endl;
-
+    int maxPrice = calcMaxPrice(m, X, Y);
+    printf("%d\n", maxPrice);
     return 0;
 }
