@@ -1,8 +1,12 @@
+/**
+ * Project 1 ASA - 2023/2024
+ * Project made by:
+ * Mariana Santana (106992)
+ * João Rodrigues (106221)
+*/
+
 #include <iostream>
 #include <vector>
-
-bool fitsVertically(int a, int b, int X, int Y) { return (a <= X && b <= Y); }
-bool fitsHorizontally(int a, int b, int X, int Y) { return (a <= Y && b <= X); }
 
 int calcMaxPrice(std::vector<std::vector<int>>& m, int X, int Y) {
     for (int i = 0; i < X; i++) {
@@ -34,15 +38,14 @@ int main() {
         scanf("%d %d %d", &a, &b, &p);
 
         if (a > 0 && b > 0 && p > 0) {
-            if (fitsVertically(a, b, X, Y)) {
+            if (a <= X && b <= Y) {
                 m[a-1][b-1] = std::max(m[a-1][b-1], p);
             }
-            if (fitsHorizontally(a, b, X, Y)) {
+            if (a <= Y && b <= X) {
                 m[b-1][a-1] = std::max(m[b-1][a-1], p);
             }
         }
     }
-
     printf("%d\n", calcMaxPrice(m, X, Y));
     return 0;
 }
