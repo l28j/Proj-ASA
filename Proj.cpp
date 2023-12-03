@@ -32,6 +32,11 @@ int main() {
     
     std::vector<std::vector<int>> m(X, std::vector<int>(Y, 0));
 
+    if (X <= 0 || Y <= 0 || n <= 0) {
+        printf("0\n");
+        return 0;
+    }
+
     for (int i = 0; i < n; i++) {
 
         int a, b, p;
