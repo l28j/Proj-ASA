@@ -27,8 +27,8 @@ int main() {
     std::string userInput;
     int X, Y, n;
     
-    scanf("%d %d", &X, &Y);
-    scanf("%d", &n);
+    if (!scanf("%d %d", &X, &Y));
+    if (!scanf("%d", &n));
     
     std::vector<std::vector<int>> m(X, std::vector<int>(Y, 0));
 
@@ -40,7 +40,7 @@ int main() {
     for (int i = 0; i < n; i++) {
 
         int a, b, p;
-        scanf("%d %d %d", &a, &b, &p);
+        if (!scanf("%d %d %d", &a, &b, &p));
 
         if (a > 0 && b > 0 && p > 0) {
             if (a <= X && b <= Y) {
