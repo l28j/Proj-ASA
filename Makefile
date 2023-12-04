@@ -39,28 +39,4 @@ DEP = $(OBJ:.o=.d)
 
 .PHONY: all clean run memcheck
 
-run1: $(EXE)
-	./$(EXE) < test1.in
 
-run2: $(EXE)
-	./$(EXE) < test2.in
-
-runA: $(EXE)
-	./$(EXE) < A.in
-
-runB: $(EXE)
-	./$(EXE) < B.in
-
-runC: $(EXE)
-	./$(EXE) < C.in
-
-runE: $(EXE)
-	./$(EXE) < E.in
-
-runALL: $(EXE)
-	./$(EXE) < test1.in
-	./$(EXE) < test2.in
-	./$(EXE) < A.in
-	./$(EXE) < B.in
-	./$(EXE) < C.in
-	./$(EXE) < E.in
